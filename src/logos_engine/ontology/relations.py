@@ -1,0 +1,7 @@
+SUPPORTS = "supports"
+CHALLENGES = "challenges"
+UNDERLIES = "underlies"
+CONTAINS = "contains"
+RESPONDS_TO = "responds_to"
+IMPACTS = "impacts"
+VIOLATES = "violates"
