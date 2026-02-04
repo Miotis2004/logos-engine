@@ -25,7 +25,7 @@ class TraceLogger:
         for trace in self.traces:
             path = self.log_dir / f"trace_{trace.subject_id}_{timestamp}.json"
             with path.open("w", encoding="utf-8") as handle:
-                json.dump(trace.to_dict(), handle, indent=2)
+                json.dump(trace.model_dump(), handle, indent=2)
             exported.append(path)
         return exported
 

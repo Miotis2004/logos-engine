@@ -1,82 +1,37 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, List, Optional, Type, TypeVar
+from typing import Any, Dict, List, Optional
 
-Score = float
+from pydantic import BaseModel, Field, confloat
 
-T = TypeVar("T")
-
-
-def _asdict(value: Any) -> Any:
-    if dataclass_is_instance(value):
-        return asdict(value)
-    if isinstance(value, list):
-        return [_asdict(item) for item in value]
-    return value
+Score = confloat(ge=0.0, le=1.0)
 
 
-def dataclass_is_instance(value: Any) -> bool:
-    return hasattr(value, "__dataclass_fields__")
-
-
-@dataclass
-class Span:
+class Span(BaseModel):
     span_id: str
     page: Optional[int] = None
     paragraph: Optional[int] = None
     start_offset: Optional[int] = None
     end_offset: Optional[int] = None
 
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
 
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        return cls(**payload)
-
-
-@dataclass
-class Source:
+class Source(BaseModel):
     id: str
     title: str
     source_type: str
     uri: Optional[str] = None
     summary: Optional[str] = None
 
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
 
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        return cls(**payload)
-
-
-@dataclass
-class Claim:
+class Claim(BaseModel):
     id: str
     text: str
     source_id: Optional[str] = None
     span: Optional[Span] = None
     confidence: Optional[Score] = None
 
-    def to_dict(self) -> Dict[str, Any]:
-        data = asdict(self)
-        if self.span:
-            data["span"] = self.span.to_dict()
-        return data
 
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        span = payload.get("span")
-        if isinstance(span, dict):
-            payload = dict(payload)
-            payload["span"] = Span.from_dict(span)
-        return cls(**payload)
-
-
-@dataclass
-class Evidence:
+class Evidence(BaseModel):
     id: str
     text: str
     evidence_type: str
@@ -84,193 +39,80 @@ class Evidence:
     span: Optional[Span] = None
     reliability: Optional[Score] = None
     relevance: Optional[Score] = None
-    polarity: int = 1
-
-    def to_dict(self) -> Dict[str, Any]:
-        data = asdict(self)
-        if self.span:
-            data["span"] = self.span.to_dict()
-        return data
-
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        span = payload.get("span")
-        if isinstance(span, dict):
-            payload = dict(payload)
-            payload["span"] = Span.from_dict(span)
-        return cls(**payload)
+    polarity: int = Field(default=1, description="1 for supporting, -1 for challenging")
 
 
-@dataclass
-class Assumption:
+class Assumption(BaseModel):
     id: str
     text: str
     source_id: Optional[str] = None
     span: Optional[Span] = None
     penalty: Optional[Score] = None
 
-    def to_dict(self) -> Dict[str, Any]:
-        data = asdict(self)
-        if self.span:
-            data["span"] = self.span.to_dict()
-        return data
 
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        span = payload.get("span")
-        if isinstance(span, dict):
-            payload = dict(payload)
-            payload["span"] = Span.from_dict(span)
-        return cls(**payload)
-
-
-@dataclass
-class Argument:
+class Argument(BaseModel):
     id: str
     claim_id: str
-    evidence_ids: List[str] = field(default_factory=list)
-    assumption_ids: List[str] = field(default_factory=list)
+    evidence_ids: List[str] = Field(default_factory=list)
+    assumption_ids: List[str] = Field(default_factory=list)
     strength: Optional[Score] = None
 
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
 
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        return cls(**payload)
-
-
-@dataclass
-class Value:
+class Value(BaseModel):
     id: str
     name: str
     description: Optional[str] = None
     weight: Optional[Score] = None
 
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
 
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        return cls(**payload)
-
-
-@dataclass
-class Constraint:
+class Constraint(BaseModel):
     id: str
     name: str
     description: Optional[str] = None
     severity: Optional[Score] = None
 
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
 
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        return cls(**payload)
-
-
-@dataclass
-class DecisionOption:
+class DecisionOption(BaseModel):
     id: str
     label: str
     description: Optional[str] = None
     score: Optional[Score] = None
 
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
 
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        return cls(**payload)
-
-
-@dataclass
-class EthicalFramework:
+class EthicalFramework(BaseModel):
     id: str
     name: str
-    decision_rules: List[Dict[str, Any]] = field(default_factory=list)
-
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        return cls(**payload)
+    decision_rules: List[Dict[str, Any]] = Field(default_factory=list)
 
 
-@dataclass
-class EthicalEvaluation:
+class EthicalEvaluation(BaseModel):
     id: str
     framework_id: str
     option_id: str
     score: Optional[Score] = None
     rationale: Optional[str] = None
 
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
 
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        return cls(**payload)
-
-
-@dataclass
-class ReasoningStep:
+class ReasoningStep(BaseModel):
     id: str
     rule_id: str
     description: str
     delta: float
     resulting_score: Optional[Score] = None
 
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
 
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        return cls(**payload)
+class ExplanationTrace(BaseModel):
+    id: str
+    subject_id: str
+    steps: List[ReasoningStep] = Field(default_factory=list)
+    uncertainty_markers: List["UncertaintyMarker"] = Field(default_factory=list)
 
 
-@dataclass
-class UncertaintyMarker:
+class UncertaintyMarker(BaseModel):
     id: str
     subject_id: str
     note: str
     severity: Optional[Score] = None
-
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        return cls(**payload)
-
-
-@dataclass
-class ExplanationTrace:
-    id: str
-    subject_id: str
-    steps: List[ReasoningStep] = field(default_factory=list)
-    uncertainty_markers: List[UncertaintyMarker] = field(default_factory=list)
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "id": self.id,
-            "subject_id": self.subject_id,
-            "steps": [_asdict(step) for step in self.steps],
-            "uncertainty_markers": [_asdict(marker) for marker in self.uncertainty_markers],
-        }
-
-    @classmethod
-    def from_dict(cls: Type[T], payload: Dict[str, Any]) -> T:
-        steps = [ReasoningStep.from_dict(item) for item in payload.get("steps", [])]
-        markers = [UncertaintyMarker.from_dict(item) for item in payload.get("uncertainty_markers", [])]
-        return cls(
-            id=payload["id"],
-            subject_id=payload["subject_id"],
-            steps=steps,
-            uncertainty_markers=markers,
-        )
 
 
 MODEL_REGISTRY = {
@@ -288,3 +130,5 @@ MODEL_REGISTRY = {
     "ExplanationTrace": ExplanationTrace,
     "UncertaintyMarker": UncertaintyMarker,
 }
+
+ExplanationTrace.model_rebuild()

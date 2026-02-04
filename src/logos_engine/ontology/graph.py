@@ -62,7 +62,7 @@ class OntologyGraph:
 
     def to_dict(self) -> Dict[str, List[Dict[str, object]]]:
         return {
-            entity_type: [entity.to_dict() for entity in bucket.values()]
+            entity_type: [entity.model_dump() for entity in bucket.values()]
             for entity_type, bucket in self.entities.items()
         }
 
@@ -74,5 +74,5 @@ class OntologyGraph:
             if model is None:
                 continue
             for item in entities:
-                graph.add_entity(model.from_dict(item))
+                graph.add_entity(model.model_validate(item))
         return graph
