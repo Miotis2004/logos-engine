@@ -1,0 +1,23 @@
+evidence_reliability_baselines:
+  empirical: 0.8
+  anecdotal: 0.4
+  expert: 0.7
+  unknown: 0.5
+
+relevance_rules:
+  - id: rel.match.title
+    description: Evidence mentions claim keywords.
+    adjustment: 0.1
+  - id: rel.scope.mismatch
+    description: Evidence scope weaker than claim.
+    adjustment: -0.2
+
+assumption_penalties:
+  default: 0.1
+  methodological: 0.2
+
+constants:
+  k: 0.5
+  evidence_volume_threshold: 3
+  penalty_cap: 0.4
+  relevance_baseline: 0.5

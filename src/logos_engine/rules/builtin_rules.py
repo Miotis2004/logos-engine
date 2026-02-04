@@ -1,0 +1,5 @@
+RELIABILITY_BASELINE = "rel.baseline"
+RELEVANCE_BASELINE = "relv.baseline"
+ASSUMPTION_PENALTY = "assumption.penalty"
+CLAIM_CONFIDENCE = "claim.confidence"
+ARGUMENT_STRENGTH = "argument.strength"
