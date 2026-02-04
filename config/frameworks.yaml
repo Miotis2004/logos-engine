@@ -1,0 +1,21 @@
+frameworks:
+  - id: deontology
+    name: Deontology
+    decision_rules:
+      - id: duty.non_harm
+        description: Avoid harm to persons.
+  - id: consequentialism
+    name: Consequentialism
+    decision_rules:
+      - id: outcome.maximize_welfare
+        description: Prefer actions with best outcomes.
+  - id: virtue_ethics
+    name: Virtue Ethics
+    decision_rules:
+      - id: character.integrity
+        description: Promote virtuous character.
+  - id: care_ethics
+    name: Care Ethics
+    decision_rules:
+      - id: relationships.care
+        description: Prioritize caring relationships.

@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "logos-engine"
+version = "0.1.0"
+description = "Local Agentic Platform for Academic Argument Evaluation & Ethical Decision Reasoning"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Logos Engine" }]
+
+dependencies = [
+  "pydantic>=2.0",
+  "pyyaml>=6.0",
+  "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0",
+  "ruff>=0.4.0",
+  "mypy>=1.5",
+  "pytest-cov>=4.0",
+]
+
+[project.scripts]
+logos-engine = "logos_engine.cli:main"
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I", "B"]
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "-q"
