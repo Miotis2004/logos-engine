@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+logs/reasoning_traces/*.json
+data/documents/*
+!data/documents/.gitkeep
+!data/synthetic_cases/.gitkeep
+!logs/reasoning_traces/.gitkeep
